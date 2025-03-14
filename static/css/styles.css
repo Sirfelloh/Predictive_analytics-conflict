@@ -1,0 +1,141 @@
+/* styles.css */
+
+/* CSS for theme customization */
+:root {
+    --primary-color: #0056b3;
+    --secondary-color: #007bff;
+    --background-color: white;
+    --form-background: #f8f9fa;
+    --text-color: #333;
+    --heading-color: #555;
+    --border-radius: 8px;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --font-family: 'Arial', sans-serif;
+    --transition-speed: 0.3s;
+}
+
+/* Dark theme variables */
+:root.dark-theme {
+    --primary-color: #003366;
+    --secondary-color: #0056b3;
+    --background-color: #121212;
+    --form-background: #1e1e1e;
+    --text-color: #f0f0f0;
+    --heading-color: #c0c0c0;
+    --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* General styles */
+body {
+    background-color: var(--background-color);
+    font-family: var(--font-family);
+    margin: 0;
+    padding: 0;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Navbar */
+.navbar {
+    background-color: #007bff;
+    transition: background-color var(--transition-speed);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+/* title and input form */
+.container {
+    margin-top: 20px;
+    padding: 20px;
+}
+
+.container form {
+    background-color: var(--form-background);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    box-shadow: var(--box-shadow);
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+/* Title */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 2rem;
+    color: var(--text-color);
+}
+
+/* Input field */
+label {
+    font-weight: bold;
+    color: var(--text-color);
+}
+
+#link {
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    background-color: var(--form-background);
+    color: var(--text-color);
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+/* Predict button */
+button[type="submit"] {
+    background-color: var(--secondary-color);
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: transform var(--transition-speed), background-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+button[type="submit"]:hover {
+    background-color: var(--primary-color);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Graphs container */
+.row {
+    margin-top: 30px;
+}
+
+.col-md-6 {
+    padding: 10px;
+}
+
+h3 {
+    text-align: center;
+    margin-bottom: 10px;
+    color: var(--heading-color);
+}
+
+/* Chart containers */
+#bar-chart,
+#line-chart {
+    background-color: var(--form-background);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: background-color var(--transition-speed), box-shadow var(--transition-speed);
+    height: 400px; 
+    width: 100%;
+}
+
+/* Heatmap container */
+iframe {
+    border: 2px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .col-md-6 {
+        width: 100%;
+    }
+}

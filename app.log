@@ -1,0 +1,133 @@
+2025-03-11 14:35:47,189 DEBUG: Looking up time zone info from registry
+2025-03-11 14:35:47,230 INFO: Scheduler started
+2025-03-11 14:35:47,230 DEBUG: Looking for jobs to run
+2025-03-11 14:35:47,230 DEBUG: No jobs; waiting until a job is added
+2025-03-11 14:35:55,635 INFO: Model and vectorizer loaded successfully.
+2025-03-11 14:35:55,645 INFO: Added job "Send daily conflict alerts" to job store "default"
+2025-03-11 14:35:55,655 DEBUG: Looking for jobs to run
+2025-03-11 14:35:55,655 DEBUG: Next wakeup is due at 2025-03-12 14:35:55.645407+03:00 (in 86399.989648 seconds)
+2025-03-11 14:35:55,715 WARNING:  * Debugger is active!
+2025-03-11 14:35:55,725 INFO:  * Debugger PIN: 696-229-653
+2025-03-11 14:47:57,108 INFO: 127.0.0.1 - - [11/Mar/2025 14:47:57] "GET / HTTP/1.1" 200 -
+2025-03-11 14:47:57,785 INFO: 127.0.0.1 - - [11/Mar/2025 14:47:57] "[33mGET /cdn-cgi/challenge-platform/scripts/jsd/main.js HTTP/1.1[0m" 404 -
+2025-03-11 14:48:00,713 INFO: 127.0.0.1 - - [11/Mar/2025 14:48:00] "GET /login?next=/predict_page HTTP/1.1" 200 -
+2025-03-11 14:48:14,648 INFO: 127.0.0.1 - - [11/Mar/2025 14:48:14] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-03-11 14:48:14,796 INFO: 127.0.0.1 - - [11/Mar/2025 14:48:14] "[35m[1mGET /admin HTTP/1.1[0m" 500 -
+2025-03-11 14:48:15,335 INFO: 127.0.0.1 - - [11/Mar/2025 14:48:15] "[36mGET /admin?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1[0m" 304 -
+2025-03-11 14:48:15,335 INFO: 127.0.0.1 - - [11/Mar/2025 14:48:15] "[36mGET /admin?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1[0m" 304 -
+2025-03-11 14:48:15,425 INFO: 127.0.0.1 - - [11/Mar/2025 14:48:15] "GET /admin?__debugger__=yes&cmd=resource&f=console.png&s=mKT09eJVRl1K6nXuO11W HTTP/1.1" 200 -
+2025-03-11 14:48:45,454 INFO: 127.0.0.1 - - [11/Mar/2025 14:48:45] "[32mPOST /login HTTP/1.1[0m" 302 -
+2025-03-11 14:48:47,329 INFO: 127.0.0.1 - - [11/Mar/2025 14:48:47] "GET /predict_page HTTP/1.1" 200 -
+2025-03-11 14:49:15,992 DEBUG: Received request to /predict_ajax
+2025-03-11 14:49:15,996 DEBUG: Link: https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022, Combined Location: Nairobi|-1.286389|36.817223|CBD
+2025-03-11 14:49:15,997 DEBUG: Parsing combined location
+2025-03-11 14:49:15,997 DEBUG: Parsed: Nairobi, -1.286389, 36.817223, CBD
+2025-03-11 14:49:15,997 DEBUG: Scraping article from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022
+2025-03-11 14:49:16,006 DEBUG: Starting new HTTPS connection (1): nation.africa:443
+2025-03-11 14:49:16,071 DEBUG: https://nation.africa:443 "GET /kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022 HTTP/11" 403 None
+2025-03-11 14:49:16,078 ERROR: Failed to scrape article from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022: 403 Client Error: Forbidden for url: https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022
+2025-03-11 14:49:16,078 ERROR: Error in /predict_ajax: No text scraped from the provided link
+Traceback (most recent call last):
+  File "c:\Users\Daiser\Desktop\Year4\flask_app.py", line 375, in predict_ajax
+    raise ValueError("No text scraped from the provided link")
+ValueError: No text scraped from the provided link
+2025-03-11 14:49:16,088 INFO: 127.0.0.1 - - [11/Mar/2025 14:49:16] "[35m[1mPOST /predict_ajax HTTP/1.1[0m" 500 -
+2025-03-11 15:17:00,225 DEBUG: Looking up time zone info from registry
+2025-03-11 15:17:00,240 INFO: Scheduler started
+2025-03-11 15:17:00,240 DEBUG: Looking for jobs to run
+2025-03-11 15:17:00,240 DEBUG: No jobs; waiting until a job is added
+2025-03-11 15:17:03,851 INFO: Model and vectorizer loaded successfully.
+2025-03-11 15:17:04,004 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-11 15:17:04,005 INFO: [33mPress CTRL+C to quit[0m
+2025-03-11 15:17:04,015 INFO:  * Restarting with stat
+2025-03-11 15:17:08,054 DEBUG: Looking up time zone info from registry
+2025-03-11 15:17:08,069 INFO: Scheduler started
+2025-03-11 15:17:08,069 DEBUG: Looking for jobs to run
+2025-03-11 15:17:08,069 DEBUG: No jobs; waiting until a job is added
+2025-03-11 15:17:12,422 INFO: Model and vectorizer loaded successfully.
+2025-03-11 15:17:12,522 WARNING:  * Debugger is active!
+2025-03-11 15:17:12,539 INFO:  * Debugger PIN: 696-229-653
+2025-03-11 15:23:20,015 DEBUG: Looking up time zone info from registry
+2025-03-11 15:23:20,030 INFO: Scheduler started
+2025-03-11 15:23:20,030 DEBUG: Looking for jobs to run
+2025-03-11 15:23:20,030 DEBUG: No jobs; waiting until a job is added
+2025-03-11 15:23:23,564 INFO: Model loaded successfully!
+2025-03-11 15:23:23,580 INFO: Vectorizer loaded successfully!
+2025-03-11 15:23:23,596 INFO: Added job "Send daily conflict alerts" to job store "default"
+2025-03-11 15:23:23,596 DEBUG: Looking for jobs to run
+2025-03-11 15:23:23,596 DEBUG: Next wakeup is due at 2025-03-12 15:23:23.596112+03:00 (in 86400.000000 seconds)
+2025-03-11 15:23:23,691 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-11 15:23:23,691 INFO: [33mPress CTRL+C to quit[0m
+2025-03-11 15:23:23,712 INFO:  * Restarting with stat
+2025-03-11 15:23:30,539 DEBUG: Looking up time zone info from registry
+2025-03-11 15:23:30,570 INFO: Scheduler started
+2025-03-11 15:23:30,572 DEBUG: Looking for jobs to run
+2025-03-11 15:23:30,572 DEBUG: No jobs; waiting until a job is added
+2025-03-11 15:23:37,729 INFO: Model loaded successfully!
+2025-03-11 15:23:37,742 INFO: Vectorizer loaded successfully!
+2025-03-11 15:23:37,758 INFO: Added job "Send daily conflict alerts" to job store "default"
+2025-03-11 15:23:37,758 DEBUG: Looking for jobs to run
+2025-03-11 15:23:37,758 DEBUG: Next wakeup is due at 2025-03-12 15:23:37.758511+03:00 (in 86400.000000 seconds)
+2025-03-11 15:23:37,805 WARNING:  * Debugger is active!
+2025-03-11 15:23:37,821 INFO:  * Debugger PIN: 696-229-653
+2025-03-11 15:27:35,021 INFO: 127.0.0.1 - - [11/Mar/2025 15:27:35] "GET / HTTP/1.1" 200 -
+2025-03-11 15:27:43,239 INFO: 127.0.0.1 - - [11/Mar/2025 15:27:43] "GET /predict_page HTTP/1.1" 200 -
+2025-03-11 15:28:01,868 DEBUG: Received POST request to /predict_ajax
+2025-03-11 15:28:01,873 DEBUG: Request data - Link: https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022, Combined Location: Nairobi|-1.238896|36.813287|Westlands
+2025-03-11 15:28:01,873 DEBUG: Parsing combined_location
+2025-03-11 15:28:01,873 DEBUG: Parsed - Location: Nairobi, Lat: -1.238896, Lon: 36.813287, Extra: Westlands
+2025-03-11 15:28:01,873 DEBUG: Scraping article from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022
+2025-03-11 15:28:01,878 DEBUG: Starting new HTTPS connection (1): nation.africa:443
+2025-03-11 15:28:01,960 DEBUG: https://nation.africa:443 "GET /kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022 HTTP/11" 403 None
+2025-03-11 15:28:01,960 ERROR: Failed to scrape article from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022: 403 Client Error: Forbidden for url: https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022
+2025-03-11 15:28:01,960 ERROR: ValueError in /predict_ajax: No text could be scraped from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022
+Traceback (most recent call last):
+  File "c:\Users\Daiser\Desktop\Year4\flask_app.py", line 390, in predict_ajax
+    raise ValueError(f"No text could be scraped from {link}")
+ValueError: No text could be scraped from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-squad-for-2026-world-cup-qualifiers-4960022
+2025-03-11 15:28:01,960 INFO: 127.0.0.1 - - [11/Mar/2025 15:28:01] "[31m[1mPOST /predict_ajax HTTP/1.1[0m" 400 -
+2025-03-11 15:54:02,261 DEBUG: Looking up time zone info from registry
+2025-03-11 15:54:02,320 INFO: Scheduler started
+2025-03-11 15:54:02,322 DEBUG: Looking for jobs to run
+2025-03-11 15:54:02,322 DEBUG: No jobs; waiting until a job is added
+2025-03-11 15:54:28,368 INFO: Model loaded successfully!
+2025-03-11 15:54:28,594 INFO: Vectorizer loaded successfully!
+2025-03-11 15:54:28,613 INFO: Added job "Send daily conflict alerts" to job store "default"
+2025-03-11 15:54:28,620 DEBUG: Looking for jobs to run
+2025-03-11 15:54:28,621 DEBUG: Next wakeup is due at 2025-03-12 15:54:28.613274+03:00 (in 86399.992999 seconds)
+2025-03-11 15:54:28,822 INFO: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-03-11 15:54:28,823 INFO: [33mPress CTRL+C to quit[0m
+2025-03-11 15:54:28,834 INFO:  * Restarting with stat
+2025-03-11 15:54:38,324 DEBUG: Looking up time zone info from registry
+2025-03-11 15:54:38,355 INFO: Scheduler started
+2025-03-11 15:54:38,355 DEBUG: Looking for jobs to run
+2025-03-11 15:54:38,355 DEBUG: No jobs; waiting until a job is added
+2025-03-11 15:54:43,949 INFO: Model loaded successfully!
+2025-03-11 15:54:43,961 INFO: Vectorizer loaded successfully!
+2025-03-11 15:54:43,980 INFO: Added job "Send daily conflict alerts" to job store "default"
+2025-03-11 15:54:43,995 DEBUG: Looking for jobs to run
+2025-03-11 15:54:44,002 DEBUG: Next wakeup is due at 2025-03-12 15:54:43.980542+03:00 (in 86399.978320 seconds)
+2025-03-11 15:54:44,068 WARNING:  * Debugger is active!
+2025-03-11 15:54:44,080 INFO:  * Debugger PIN: 696-229-653
+2025-03-11 15:54:44,294 INFO: 127.0.0.1 - - [11/Mar/2025 15:54:44] "GET / HTTP/1.1" 200 -
+2025-03-11 15:54:51,892 INFO: 127.0.0.1 - - [11/Mar/2025 15:54:51] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2025-03-11 15:54:55,754 INFO: 127.0.0.1 - - [11/Mar/2025 15:54:55] "GET /predict_page HTTP/1.1" 200 -
+2025-03-11 15:55:12,663 DEBUG: Received POST request to /predict_ajax
+2025-03-11 15:55:12,674 DEBUG: Request data - Link: https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-provisional-squad-for-2026-world-cup-qualifiers-4960022, Combined Location: Nairobi|-1.286389|36.817223|CBD
+2025-03-11 15:55:12,675 DEBUG: Parsing combined_location
+2025-03-11 15:55:12,675 DEBUG: Parsed - Location: Nairobi, Lat: -1.286389, Lon: 36.817223, Extra: CBD
+2025-03-11 15:55:12,675 DEBUG: Scraping article from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-provisional-squad-for-2026-world-cup-qualifiers-4960022
+2025-03-11 15:55:12,686 DEBUG: Starting new HTTPS connection (1): nation.africa:443
+2025-03-11 15:55:12,775 DEBUG: https://nation.africa:443 "GET /kenya/sports/football/mccarthy-names-harambee-stars-provisional-squad-for-2026-world-cup-qualifiers-4960022 HTTP/11" 403 None
+2025-03-11 15:55:12,777 ERROR: Failed to scrape article from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-provisional-squad-for-2026-world-cup-qualifiers-4960022: 403 Client Error: Forbidden for url: https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-provisional-squad-for-2026-world-cup-qualifiers-4960022
+2025-03-11 15:55:12,777 ERROR: ValueError in /predict_ajax: No text could be scraped from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-provisional-squad-for-2026-world-cup-qualifiers-4960022
+Traceback (most recent call last):
+  File "c:\Users\Daiser\Desktop\Year4\flask_app.py", line 390, in predict_ajax
+    raise ValueError(f"No text could be scraped from {link}")
+ValueError: No text could be scraped from https://nation.africa/kenya/sports/football/mccarthy-names-harambee-stars-provisional-squad-for-2026-world-cup-qualifiers-4960022
+2025-03-11 15:55:12,780 INFO: 127.0.0.1 - - [11/Mar/2025 15:55:12] "[31m[1mPOST /predict_ajax HTTP/1.1[0m" 400 -
+2025-03-11 15:55:47,541 INFO:  * Detected change in 'c:\\Users\\Daiser\\Desktop\\Year4\\flask_app.py', reloading
+2025-03-11 15:55:49,091 INFO:  * Restarting with stat

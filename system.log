@@ -1,0 +1,47 @@
+INFO:apscheduler.scheduler:Added job "Send daily conflict alerts" to job store "default"
+INFO:apscheduler.scheduler:Added job "Send daily conflict alerts" to job store "default"
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on https://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:apscheduler.scheduler:Added job "Send daily conflict alerts" to job store "default"
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 696-229-653
+INFO:apscheduler.scheduler:Added job "Send daily conflict alerts" to job store "default"
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:apscheduler.scheduler:Added job "Send daily conflict alerts" to job store "default"
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 696-229-653
+INFO:werkzeug: * Detected change in 'c:\\Users\\Daiser\\Desktop\\Year4\\flask_app.py', reloading
+INFO:werkzeug: * Restarting with stat
+INFO:apscheduler.scheduler:Added job "Send daily conflict alerts" to job store "default"
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:apscheduler.scheduler:Added job "Send daily conflict alerts" to job store "default"
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:21:13] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:21:20] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:21:25] "[32mGET /predict_page HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:21:25] "GET /login?next=/predict_page HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:21:32] "GET /register HTTP/1.1" 200 -
+INFO:root:New user Felix Otieno registered
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:21:51] "[32mPOST /register HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:21:51] "GET /login HTTP/1.1" 200 -
+INFO:root:User Felix Otieno logged in successfully
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:06] "[32mPOST /login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:07] "GET /admin HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:07] "GET /static/map.html HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:31] "GET / HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:37] "[35m[1mGET /about HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:37] "GET /about?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:37] "GET /about?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:37] "GET /about?__debugger__=yes&cmd=resource&f=console.png&s=nbGlFFPWNp1kcEPip8s1 HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:38] "GET /about?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:22:45] "GET /predict_page HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [11/Mar/2025 13:23:08] "GET /predict_page HTTP/1.1" 200 -

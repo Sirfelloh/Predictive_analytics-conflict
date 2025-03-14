@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict Unrest - Kenya Conflict Prediction</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #f0f2f5, #e0e6f0);
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            text-align: center;
+            padding: 20px 0;
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .header h1 {
+            font-size: 48px;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+            color: #ffffff;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #ffffff;
+            box-shadow: 3px 0 10px rgba(0,0,0,0.15);
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 20px;
+            z-index: 1000;
+        }
+        .sidebar a {
+            padding: 12px 20px;
+            text-decoration: none;
+            font-size: 16px;
+            color: #2c3e50;
+            display: block;
+            transition: 0.3s;
+            background: rgba(255, 255, 255, 0.9);
+            margin: 5px 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .sidebar a:hover {
+            background-color: #3498db;
+            color: white;
+            transform: translateX(5px);
+        }
+        .sidebar .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            color: #2c3e50;
+            cursor: pointer;
+        }
+        .menu-btn {
+            font-size: 24px;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            color: #2c3e50;
+            background: #ffffff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .menu-btn:hover {
+            transform: scale(1.1);
+        }
+        .content-wrapper {
+            max-width: 1200px;
+            margin: 30px auto 50px;
+            padding: 40px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .title {
+            font-size: 40px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-section {
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            color: #34495e;
+            font-weight: 500;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            transition: background 0.3s, transform 0.2s;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #2980b9, #1f6399);
+            transform: scale(1.05);
+        }
+        .graph-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .graph-box, .map-box {
+            width: 48%;
+            padding: 25px;
+            background-color: #f9fbfc;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+        }
+        .graph-box h3, .map-box h3 {
+            font-size: 20px;
+            color: #34495e;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        #timeline-chart {
+            width: 100%;
+            height: 400px;
+            margin: 40px 0;
+            background-color: #f9fbfc;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+        }
+        #map {
+            width: 100%;
+            height: 400px;
+            border-radius: 12px;
+        }
+        #pie-chart {
+            width: 100%;
+            height: 400px;
+        }
+        .tweets-section, .headlines-section {
+            margin: 40px 0;
+            padding: 25px;
+            background-color: #f9fbfc;
+            border-radius: 12px;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+        }
+        .tweets-section h3, .headlines-section h3 {
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .tweets-container, .headlines-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .tweet-column, .headline-column {
+            flex: 1;
+            min-width: 300px;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .tweet-column:hover, .headline-column:hover {
+            transform: translateY(-5px);
+        }
+        .tweet-column h4, .headline-column h4 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .tweet-card, .headline-card {
+            background: #f0f2f5;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+        .tweet-author, .headline-source {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .tweet-date, .headline-date {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+        .tweet-text, .headline-title {
+            margin-top: 8px;
+            color: #34495e;
+            font-size: 14px;
+        }
+        .no-tweets, .no-headlines {
+            text-align: center;
+            color: #e74c3c;
+            font-style: italic;
+        }
+        .drop-in {
+            opacity: 0;
+            transform: translateY(-50px);
+            animation: dropIn 0.8s ease forwards;
+        }
+        @keyframes dropIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Kenya Conflict Prediction</h1>
+        <div style="position: absolute; top: 20px; right: 20px;">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('dashboard_admin') }}" class="btn btn-light ms-2"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-danger ms-2"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-light ms-2"><i class="fas fa-sign-in-alt"></i> Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div id="sidebar" class="sidebar">
+        <a href="javascript:void(0)" class="close-btn" onclick="closeSidebar()">×</a>
+        <a href="{{ url_for('dashboard') }}"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="{{ url_for('predict_page') }}"><i class="fas fa-chart-line"></i> Predict Unrest</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard_admin') }}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+            <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
+        {% endif %}
+    </div>
+    <span class="menu-btn" onclick="openSidebar()">☰</span>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <h1 class="title drop-in" style="animation-delay: 0.2s;">Predict Unrest</h1>
+
+        <!-- Form Section -->
+        <div class="form-section drop-in" style="animation-delay: 0.4s;">
+            <form id="predict-form" method="POST">
+                <div class="form-group">
+                    <label for="link"><i class="fas fa-link"></i> Enter Link:</label>
+                    <input type="url" class="form-control" id="link" name="link" required>
+                </div>
+                <div class="form-group">
+                    <label for="location"><i class="fas fa-map-marker-alt"></i> Select Location:</label>
+                    <select class="form-control" id="location" name="location" required>
+                        {% for city, lat, lon in locations %}
+                            <option value="{{ city }}|{{ lat }}|{{ lon }}">{{ city }}</option>
+                            {% for extra_loc, extra_lat, extra_lon in extra_locations[city] %}
+                                <option value="{{ city }}|{{ extra_lat }}|{{ extra_lon }}|{{ extra_loc }}">{{ extra_loc }} - {{ city }}</option>
+                            {% endfor %}
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> Predict</button>
+            </form>
+        </div>
+
+        <!-- Pie Chart and Map -->
+        <div class="graph-container drop-in" style="animation-delay: 0.6s;">
+            <div class="graph-box">
+                <h3>Conflict Levels by City</h3>
+                <div id="pie-chart"></div>
+            </div>
+            <div class="map-box">
+                <h3>Conflict Map</h3>
+                <div id="map"></div>
+            </div>
+        </div>
+
+        <!-- Tweets Section -->
+        <div class="tweets-section drop-in" style="animation-delay: 0.8s;">
+            <h3><i class="fab fa-twitter"></i> Latest Tweets</h3>
+            <div class="tweets-container">
+                {% for username, tweets in tweets_by_user.items() %}
+                    <div class="tweet-column">
+                        <h4>@{{ username }}</h4>
+                        {% for tweet in tweets %}
+                            <div class="tweet-card">
+                                <div class="tweet-author">{{ tweet.author }}</div>
+                                <div class="tweet-date">{{ tweet.date }}</div>
+                                <div class="tweet-text">{{ tweet.text }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Timeline Chart -->
+        <div class="drop-in" style="animation-delay: 1.0s;">
+            <h3 class="text-center">Conflict Timeline</h3>
+            <div id="timeline-chart"></div>
+        </div>
+
+        <!-- News Headlines Section -->
+        <div class="headlines-section drop-in" style="animation-delay: 1.2s;">
+            <h3><i class="fas fa-newspaper"></i> Latest News Headlines</h3>
+            <div class="headlines-container">
+                {% for source, headlines in headlines_by_source.items() %}
+                    <div class="headline-column">
+                        <h4>{{ source }}</h4>
+                        {% for headline in headlines %}
+                            <div class="headline-card">
+                                <div class="headline-source">{{ headline.source }}</div>
+                                <div class="headline-date">{{ headline.date }}</div>
+                                <div class="headline-title">{{ headline.title }}</div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Sidebar Toggle
+        function openSidebar() {
+            document.getElementById("sidebar").style.width = "200px";
+        }
+        function closeSidebar() {
+            document.getElementById("sidebar").style.width = "0";
+        }
+
+        // Initial Pie Chart Data
+        var initialPieData = {{ pie_chart | safe }};
+        if (typeof initialPieData !== 'object' || !initialPieData.labels) {
+            console.error('Invalid initialPieData:', initialPieData);
+            initialPieData = { labels: [], values: [], type: 'pie', marker: { colors: [] } };
+        }
+
+        // Plotly Layout
+        var layout = {
+            height: 400,
+            margin: { t: 50, b: 50, l: 50, r: 50 },
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#34495e' }
+        };
+
+        // Function to Animate Pie Chart Clockwise
+        function animatePieChart(targetData, duration = 2000) {
+            var steps = 20; // Number of animation steps
+            var initialValues = Array(targetData.labels.length).fill(0);
+            var stepValues = targetData.values.map(v => v / steps);
+
+            // Initial empty chart
+            Plotly.newPlot('pie-chart', [{
+                labels: targetData.labels,
+                values: initialValues,
+                type: 'pie',
+                marker: targetData.marker,
+                textinfo: 'label+percent',
+                hoverinfo: 'label+value+percent'
+            }], layout);
+
+            // Animation frames
+            var frames = [];
+            for (var i = 1; i <= steps; i++) {
+                frames.push({
+                    data: [{
+                        values: initialValues.map((v, idx) => v + stepValues[idx] * i)
+                    }]
+                });
+            }
+
+            Plotly.animate('pie-chart', frames, {
+                transition: {
+                    duration: duration / steps,
+                    easing: 'linear'
+                },
+                frame: {
+                    duration: duration / steps,
+                    redraw: true
+                }
+            });
+        }
+
+        // Animate Pie Chart on Page Load
+        document.addEventListener('DOMContentLoaded', function() {
+            animatePieChart(initialPieData);
+
+            // Timeline Chart
+            var timelineChart = {{ timeline_chart | safe }};
+            if (!Array.isArray(timelineChart)) {
+                console.error('Invalid timelineChart data:', timelineChart);
+                timelineChart = [];
+            }
+            Plotly.newPlot('timeline-chart', timelineChart, layout);
+        });
+
+        // Leaflet Map Initialization
+        var map = L.map('map').setView([1.2921, 36.8219], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var predictions = {{ map_data_json | safe }};
+        var latestPrediction = {{ latest_prediction | tojson | safe }};
+
+        predictions.forEach(function(pred) {
+            var iconColor = pred.conflict_level > 0 ? 'red' : 'green';
+            var customIcon = L.icon({
+                iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${iconColor}.png`,
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34]
+            });
+            var marker = L.marker([pred.latitude, pred.longitude], { icon: customIcon }).addTo(map);
+            marker.bindPopup(
+                `<b>${pred.location_name} - ${pred.extra_location}</b><br>` +
+                `Conflict Level: ${pred.conflict_level}<br>` +
+                `Date: ${pred.date}<br>` +
+                `Status: ${pred.conflict_level > 0 ? 'Civil Unrest' : 'No Unrest'}`
+            );
+        });
+
+        if (latestPrediction && typeof latestPrediction === 'object') {
+            var latLng = [latestPrediction.latitude, latestPrediction.longitude];
+            var iconColor = latestPrediction.conflict_level > 0 ? 'red' : 'green';
+            var customIcon = L.icon({
+                iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${iconColor}.png`,
+                shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                iconSize: [25, 41],
+                iconAnchor: [12, 41],
+                popupAnchor: [1, -34]
+            });
+            var marker = L.marker(latLng, { icon: customIcon }).addTo(map);
+            marker.bindPopup(
+                `<b>${latestPrediction.location_name} - ${latestPrediction.extra_location}</b><br>` +
+                `Conflict Level: ${latestPrediction.conflict_level}<br>` +
+                `Status: ${latestPrediction.conflict_level > 0 ? 'Civil Unrest' : 'No Unrest'}`
+            ).openPopup();
+            map.setView(latLng, 10);
+        }
+
+        // AJAX Form Submission
+        $('#predict-form').on('submit', function(e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: '/predict_ajax',
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        // Show prediction result
+                        Swal.fire({
+                            icon: response.prediction.label === 'Civil Unrest' ? 'warning' : 'success',
+                            title: response.prediction.label,
+                            text: `Prediction for ${response.prediction.location}: ${response.prediction.label} detected.`,
+                            showConfirmButton: true,
+                            timer: 5000,
+                            timerProgressBar: true
+                        });
+
+                        // Update and animate pie chart
+                        animatePieChart(response.pie_data);
+
+                        // Update map with new prediction
+                        var iconColor = response.prediction.conflict_level > 0 ? 'red' : 'green';
+                        var customIcon = L.icon({
+                            iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-${iconColor}.png`,
+                            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+                            iconSize: [25, 41],
+                            iconAnchor: [12, 41],
+                            popupAnchor: [1, -34]
+                        });
+                        var marker = L.marker([response.prediction.latitude, response.prediction.longitude], { icon: customIcon }).addTo(map);
+                        marker.bindPopup(
+                            `<b>${response.prediction.location}</b><br>` +
+                            `Conflict Level: ${response.prediction.conflict_level}<br>` +
+                            `Status: ${response.prediction.label}`
+                        ).openPopup();
+                        map.setView([response.prediction.latitude, response.prediction.longitude], 10);
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.error,
+                            showConfirmButton: true
+                        });
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while processing the prediction.',
+                        showConfirmButton: true
+                    });
+                }
+            });
+        });
+
+        // SweetAlert2 for Flash Messages
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    Swal.fire({
+                        icon: category === 'success' ? 'success' : 'error',
+                        title: category === 'success' ? 'Success' : 'Error',
+                        text: '{{ message }}',
+                        showConfirmButton: true,
+                        timer: 5000,
+                        timerProgressBar: true
+                    });
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        // SweetAlert2 for Prediction Result
+        {% if prediction_result %}
+            Swal.fire({
+                icon: '{{ prediction_result.label }}' === 'Civil Unrest' ? 'warning' : 'success',
+                title: '{{ prediction_result.label }}',
+                text: 'Prediction for {{ prediction_result.location }}: {{ prediction_result.label }} detected.',
+                showConfirmButton: true,
+                timer: 5000,
+                timerProgressBar: true
+            });
+        {% endif %}
+    </script>
+</body>
+</html>
