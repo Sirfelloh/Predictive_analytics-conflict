@@ -241,7 +241,6 @@
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
         <h1>Kenya Conflict Prediction</h1>
         <div style="position: absolute; top: 20px; right: 20px;">
@@ -254,13 +253,13 @@
         </div>
     </div>
 
-    <!-- Sidebar -->
     <div id="sidebar" class="sidebar">
         <a href="javascript:void(0)" class="close-btn" onclick="closeSidebar()">×</a>
         <a href="{{ url_for('dashboard') }}"><i class="fas fa-home"></i> Dashboard</a>
         <a href="{{ url_for('predict_page') }}"><i class="fas fa-chart-line"></i> Predict Unrest</a>
         {% if current_user.is_authenticated %}
             <a href="{{ url_for('dashboard_admin') }}"><i class="fas fa-tachometer-alt"></i> Admin Dashboard</a>
+            <a href="{{ url_for('view_logs') }}"><i class="fas fa-file-alt"></i> View Logs</a> <!-- Added link -->
             <a href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt"></i> Logout</a>
         {% else %}
             <a href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt"></i> Login</a>
@@ -268,11 +267,9 @@
     </div>
     <span class="menu-btn" onclick="openSidebar()">☰</span>
 
-    <!-- Main Content -->
     <div class="content-wrapper">
         <h1 class="title drop-in" style="animation-delay: 0.2s;">Predict Unrest</h1>
 
-        <!-- Form Section -->
         <div class="form-section drop-in" style="animation-delay: 0.4s;">
             <form id="predict-form" method="POST">
                 <div class="form-group">
@@ -294,7 +291,6 @@
             </form>
         </div>
 
-        <!-- Pie Chart and Map -->
         <div class="graph-container drop-in" style="animation-delay: 0.6s;">
             <div class="graph-box">
                 <h3>Conflict Levels by City</h3>
@@ -306,12 +302,11 @@
             </div>
         </div>
 
-        <!-- Tweets Section -->
         <div class="tweets-section drop-in" style="animation-delay: 0.8s;">
             <h3><i class="fab fa-twitter"></i> Latest Tweets</h3>
             <div class="tweets-container">
                 {% for username, tweets in tweets_by_user.items() %}
-                    <div class="tweet-column">
+                   [TRUNCATED]                    <div class="tweet-column">
                         <h4>@{{ username }}</h4>
                         {% for tweet in tweets %}
                             <div class="tweet-card">
@@ -325,13 +320,11 @@
             </div>
         </div>
 
-        <!-- Timeline Chart -->
         <div class="drop-in" style="animation-delay: 1.0s;">
             <h3 class="text-center">Conflict Timeline</h3>
             <div id="timeline-chart"></div>
         </div>
 
-        <!-- News Headlines Section -->
         <div class="headlines-section drop-in" style="animation-delay: 1.2s;">
             <h3><i class="fas fa-newspaper"></i> Latest News Headlines</h3>
             <div class="headlines-container">

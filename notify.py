@@ -1,9 +1,16 @@
+from json import load
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+import os
+from flask import jsonify
+import requests
+from dotenv import load_dotenv
 
+
+load_dotenv()
 # Set up APScheduler
 scheduler = BackgroundScheduler()
 scheduler.start()
@@ -29,6 +36,25 @@ def send_email():
             print("Email sent successfully.")
     except Exception as e:
         print(f"Failed to send email: {e}")
+
+
+def send_sms(message):
+    url = "https://api.tiaraconnect.io/api/messaging/sendsms"
+    
+    headers = {
+        "Authorization": f"Bearer {os.getenv('API_KEY')}",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "from": os.getenv("SMS_FROM", "TIARA"),
+        "to": os.getenv("SMS_TO"),
+        "message": message,
+    }
+
+    response = requests.post(url, json=data, headers=headers)
+    return jsonify(response.json()), response.status_code
+
 
 # Schedule email every day at a specific time (e.g., at 9:00 AM)
 scheduler.add_job(

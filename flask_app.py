@@ -1,3 +1,4 @@
+import os
 from flask import Flask, render_template, request, flash, redirect, url_for, jsonify, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -38,7 +39,7 @@ db = SQLAlchemy(app)
 scheduler = BackgroundScheduler()
 scheduler.start()
 
-# Load the model and vectorizer with error handling
+# Load the model, vectorizer, and selector with error handling
 try:
     with open('civil_unrest_model.pkl', 'rb') as model_file:
         model = pickle.load(model_file)
@@ -46,11 +47,14 @@ try:
     with open('vectorizer.pkl', 'rb') as vectorizer_file:
         vectorizer = pickle.load(vectorizer_file)
         logger.info("Vectorizer loaded successfully!")
+    with open('feature_selector.pkl', 'rb') as selector_file:
+        selector = pickle.load(selector_file)
+        logger.info("Feature selector loaded successfully!")
 except FileNotFoundError as e:
-    logger.error(f"Failed to load model or vectorizer files: {e}")
+    logger.error(f"Failed to load model, vectorizer, or selector files: {e}")
     raise
 except Exception as e:
-    logger.error(f"Unexpected error loading model or vectorizer: {e}")
+    logger.error(f"Unexpected error loading model, vectorizer, or selector: {e}")
     raise
 
 # Database Models
@@ -80,6 +84,18 @@ class Admin(UserMixin, db.Model):
     def __repr__(self):
         return f"<Admin {self.username}>"
 
+class UserLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('admin.id'), nullable=True)
+    username = db.Column(db.String(100), nullable=True)
+    action = db.Column(db.String(100), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    details = db.Column(db.Text, nullable=True)
+    ip_address = db.Column(db.String(45), nullable=True)
+
+    def __repr__(self):
+        return f"<UserLog {self.username} - {self.action} at {self.timestamp}>"
+
 @login_manager.user_loader
 def load_user(user_id):
     return Admin.query.get(int(user_id))
@@ -94,52 +110,24 @@ def create_default_admin():
         db.session.commit()
         logger.info("Default admin created!")
 
-# Real-time Alerts
-def check_alerts():
-    THRESHOLD = 50
-    today = datetime.today().date()
-    date_range = [today - timedelta(days=i) for i in range(3)]
-    alert_data = []
-    for single_date in date_range:
-        daily_data = db.session.query(
-            Prediction.location_name,
-            func.sum(Prediction.conflict_level).label('total_conflict')
-        ).filter(Prediction.date == single_date).group_by(Prediction.location_name).all()
-        for location_name, total_conflict in daily_data:
-            if total_conflict >= THRESHOLD:
-                alert_data.append((location_name, single_date, total_conflict))
-    if alert_data:
-        send_email(alert_data)
-
-def send_email(alert_data):
-    sender_email = "your-email@example.com"  # Replace with your email
-    receiver_email = "receiver-email@example.com"  # Replace with receiver email
-    password = "your-email-password"  # Replace with your email password or app-specific password
-    msg = MIMEMultipart()
-    msg['From'] = sender_email
-    msg['To'] = receiver_email
-    msg['Subject'] = "Conflict Alert Summary"
-    body = "Alert Summary for the Last 3 Days:\n\n"
-    for location, alert_date, conflict_level in alert_data:
-        body += f"Location: {location}, Date: {alert_date}, Conflict Level: {conflict_level}\n"
-    msg.attach(MIMEText(body, 'plain'))
-    try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, msg.as_string())
-            logger.info("Email sent successfully.")
-    except Exception as e:
-        logger.error(f"Failed to send email: {e}")
-
-scheduler.add_job(
-    func=check_alerts,
-    trigger=IntervalTrigger(hours=24),
-    id='alert_job',
-    name='Send daily conflict alerts',
-    replace_existing=True
-)
-
 # Helper Functions
+def log_user_action(action, details=None, user=None):
+    ip_address = request.remote_addr
+    username = user.username if user else "anonymous"
+    user_id = user.id if user else None
+    
+    user_log = UserLog(
+        user_id=user_id,
+        username=username,
+        action=action,
+        details=details,
+        ip_address=ip_address
+    )
+    db.session.add(user_log)
+    db.session.commit()
+    
+    logger.info(f"User Action: {action} by {username} (IP: {ip_address}) - Details: {details or 'None'}")
+
 def scrape_article_text(url):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
@@ -168,7 +156,30 @@ def preprocess_text(text):
     text = re.sub(r'[^a-z0-9\s]', '', text)
     return re.sub(r'\s+', ' ', text).strip()
 
-# Fetch News Headlines from RSS Feed
+def send_sms(message):
+    url = "https://api2.tiaraconnect.io/api/messaging/sendsms"
+    headers = {
+        "Authorization": f"Bearer {os.getenv('API_KEY')}",
+        "Content-Type": "application/json"
+    }
+    recipients = os.getenv("SMS_TO", "").split(",")
+
+    responses = []
+    for recipient in recipients:
+        data = {
+            "from": os.getenv("SMS_FROM", "TIARA"),
+            "to": recipient,
+            "message": message,
+        }
+        response = requests.post(url, json=data, headers=headers)
+        responses.append({
+            "to": recipient,
+            "status_code": response.status_code,
+            "response": response.json()
+        })
+    logger.info(f"SMS sent: {responses}")
+    return responses
+
 def fetch_news_headlines(feed_url="http://feeds.bbci.co.uk/news/world/africa/rss.xml", max_headlines=5):
     headlines_by_source = {}
     try:
@@ -193,6 +204,7 @@ def fetch_news_headlines(feed_url="http://feeds.bbci.co.uk/news/world/africa/rss
 # Routes
 @app.route('/')
 def dashboard():
+    log_user_action("dashboard_access", "Accessed public dashboard")
     city_conflicts = db.session.query(
         Prediction.location_name,
         func.sum(Prediction.conflict_level).label('total_conflict')
@@ -219,6 +231,7 @@ def dashboard():
 
 @app.route('/predict_page')
 def predict_page():
+    log_user_action("predict_page_access", "Accessed predict page", user=current_user if current_user.is_authenticated else None)
     locations = [
         ('Nairobi', -1.286389, 36.817223),
         ('Mombasa', -4.043477, 39.668206),
@@ -296,6 +309,7 @@ def predict():
     link = request.form.get('link', '')
     combined_location = request.form.get('location', '')
     if not link or not combined_location:
+        log_user_action("prediction_attempt", "Missing link or location", user=current_user if current_user.is_authenticated else None)
         flash('Both link and location are required', 'error')
         return redirect(url_for('predict_page'))
     try:
@@ -308,8 +322,11 @@ def predict():
         article_text = scrape_article_text(link)
         cleaned_text = preprocess_text(article_text)
         vectorized_text = vectorizer.transform([cleaned_text])
+        vectorized_text = selector.transform(vectorized_text)
         prediction = model.predict(vectorized_text)[0]
+        prediction_proba = model.predict_proba(vectorized_text)[0]
         result_label = "Civil Unrest" if prediction == 1 else "No Civil Unrest"
+        confidence = prediction_proba[1] if prediction == 1 else prediction_proba[0]
 
         today = datetime.today().date()
         today_pred = Prediction.query.filter_by(location_name=location_name, extra_location=extra_location, date=today).first()
@@ -327,9 +344,13 @@ def predict():
             db.session.add(new_prediction)
         db.session.commit()
 
+        details = f"Prediction for {location_name} - {extra_location}: {result_label} (Confidence: {confidence * 100:.2f}%)"
+        log_user_action("prediction", details, user=current_user if current_user.is_authenticated else None)
+
         session['prediction_result'] = {
             'label': result_label,
-            'location': f"{location_name} - {extra_location}"
+            'location': f"{location_name} - {extra_location}",
+            'confidence': f"{confidence * 100:.2f}%"
         }
         session['latest_prediction'] = {
             'latitude': latitude,
@@ -339,9 +360,10 @@ def predict():
             'extra_location': extra_location
         }
 
-        flash(f"Prediction for {location_name} - {extra_location} updated successfully!", 'success')
+        flash(f"Prediction for {location_name} - {extra_location}: {result_label} (Confidence: {confidence * 100:.2f}%)", 'success')
         return redirect(url_for('predict_page'))
     except Exception as e:
+        log_user_action("prediction_error", f"Error: {str(e)}", user=current_user if current_user.is_authenticated else None)
         logger.error(f"Error in predict route: {e}")
         flash(f"An error occurred: {str(e)}", 'error')
         return redirect(url_for('predict_page'))
@@ -351,6 +373,7 @@ def predict_ajax():
     link = request.form.get('link', '')
     combined_location = request.form.get('location', '')
     if not link or not combined_location:
+        log_user_action("prediction_attempt_ajax", "Missing link or location", user=current_user if current_user.is_authenticated else None)
         logger.warning("Missing link or location in predict_ajax")
         return jsonify({'error': 'Both link and location are required'}), 400
     
@@ -368,26 +391,27 @@ def predict_ajax():
         if "Unable to access content" in article_text or not article_text.strip():
             logger.warning(f"Using fallback text for {link}")
             article_text = "Unable to scrape article content; assuming neutral context."
-
+        
         cleaned_text = preprocess_text(article_text)
         vectorized_text = vectorizer.transform([cleaned_text])
+        vectorized_text = selector.transform(vectorized_text)
 
         # Check feature compatibility
-        expected_features = model.n_features_in_ if hasattr(model, 'n_features_in_') else 30  # Adjust based on your model
+        expected_features = model.n_features_in_ if hasattr(model, 'n_features_in_') else vectorizer.get_feature_names_out().size
         actual_features = vectorized_text.shape[1]
         if actual_features != expected_features:
             logger.warning(f"Feature mismatch: expected {expected_features}, got {actual_features}. Padding/truncating.")
             if actual_features < expected_features:
-                # Pad with zeros
                 padding = np.zeros((1, expected_features - actual_features))
                 vectorized_text = np.hstack((vectorized_text.toarray(), padding))
                 vectorized_text = np.sparse.csr_matrix(vectorized_text)
             else:
-                # Truncate
                 vectorized_text = vectorized_text[:, :expected_features]
 
         prediction = model.predict(vectorized_text)[0]
+        prediction_proba = model.predict_proba(vectorized_text)[0]
         result_label = "Civil Unrest" if prediction == 1 else "No Civil Unrest"
+        confidence = prediction_proba[1] if prediction == 1 else prediction_proba[0]
 
         today = datetime.today().date()
         today_pred = Prediction.query.filter_by(location_name=location_name, extra_location=extra_location, date=today).first()
@@ -421,6 +445,11 @@ def predict_ajax():
             'hoverinfo': 'label+value+percent'
         }
 
+        message = f"Prediction for {location_name} - {extra_location} updated successfully!: {result_label} (Confidence: {confidence * 100:.2f}%)"
+        send_sms(message)
+
+        details = f"Prediction for {location_name} - {extra_location}: {result_label} (Confidence: {confidence * 100:.2f}%)"
+        log_user_action("prediction_ajax", details, user=current_user if current_user.is_authenticated else None)
         logger.info(f"Prediction successful for {location_name} - {extra_location}: {result_label}")
         return jsonify({
             'success': True,
@@ -429,14 +458,17 @@ def predict_ajax():
                 'location': f"{location_name} - {extra_location}",
                 'latitude': latitude,
                 'longitude': longitude,
-                'conflict_level': int(prediction == 1)
+                'conflict_level': int(prediction == 1),
+                'confidence': confidence * 100
             },
             'pie_data': pie_data
         })
     except ValueError as ve:
+        log_user_action("prediction_error_ajax", f"ValueError: {str(ve)}", user=current_user if current_user.is_authenticated else None)
         logger.error(f"ValueError in predict_ajax: {ve}")
         return jsonify({'error': str(ve)}), 400
     except Exception as e:
+        log_user_action("prediction_error_ajax", f"Unexpected error: {str(e)}", user=current_user if current_user.is_authenticated else None)
         logger.error(f"Unexpected error in predict_ajax: {e}")
         db.session.rollback()
         return jsonify({'error': f"An unexpected error occurred: {str(e)}"}), 500
@@ -449,15 +481,18 @@ def login():
         admin = Admin.query.filter_by(username=username).first()
         if admin and admin.check_password(password):
             login_user(admin)
+            log_user_action("login", f"Successful login for {username}", user=admin)
             flash('Login successful!', 'success')
             return redirect(url_for('dashboard_admin'))
         else:
+            log_user_action("login_attempt", f"Failed login attempt for {username}")
             flash('Invalid credentials', 'error')
     return render_template('login.html')
 
 @app.route('/admin')
 @login_required
 def dashboard_admin():
+    log_user_action("admin_access", "Accessed admin dashboard", user=current_user)
     predictions = Prediction.query.all()
     threshold = 50
     today = datetime.today().date()
@@ -483,9 +518,17 @@ def dashboard_admin():
     timeline_chart_json = json.dumps(traces, cls=PlotlyJSONEncoder)
     return render_template('dashboard.html', predictions=predictions, recent_alerts=recent_alerts, timeline_chart_json=timeline_chart_json)
 
+@app.route('/admin/logs')
+@login_required
+def view_logs():
+    log_user_action("logs_access", "Viewed system logs", user=current_user)
+    logs = UserLog.query.order_by(UserLog.timestamp.desc()).limit(100).all()
+    return render_template('logs.html', logs=logs)
+
 @app.route('/logout')
 @login_required
 def logout():
+    log_user_action("logout", f"User {current_user.username} logged out", user=current_user)
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for('login'))
